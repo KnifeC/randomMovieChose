@@ -81,4 +81,5 @@ def main():
     dirList = get_file_and_dir_list(source_path)
     output_the_path(dirList)
 
-main()
+if __name__ == '__main__':
+    main()
