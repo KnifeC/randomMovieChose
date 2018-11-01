@@ -8,43 +8,49 @@ import shutil
 def get_path():
     choose = True
     while choose != 'y':
-        print(os.getcwd)
+        print(os.getcwd())
         print('\n')
-        dirDict = get_file_and_dir_dict('.')
-        output_the_path(dirDict)
+        dirList = get_dir_list('.')
+        output_the_path(dirList)
         choose = input('''
         please input the number that you want to chose \n 
-        input '-1' to make new dir \n 
+        input 'n' to make new dir \n 
         input 'y' to choose the dir \n 
         input 'u' to back parent dir \n
         '''
         )
-        if choose == '-1':
+        if choose == 'n':
             make_new_dir()
         elif choose == 'y':
-            sPath = dirDict[int(choose)]
-            changePath = os.path.join('.','sPath')
-            os.chdir(changePath)
-            return changePath
+            return os.getcwd()
         elif choose == 'u':
             changePath = os.path.join('.','..')
             os.chdir(changePath)
         else :
-            sPath = dirDict[int(choose)]
-            changePath = os.path.join('.','sPath')
+            sPath = dirList[int(choose)]
+            #print(sPath)
+            changePath = os.path.join('.',sPath)
             os.chdir(changePath)
 
-def get_file_and_dir_dict(Path):
-    os.chdir(Path)
-    dirList = os.listdir(Path)
-    dirDict = dict(dirList)
-    return dirDict
+def get_dir_list(Path):
+    dir_list = []
+    dir_originlist = get_file_and_dir_list(Path)
+    for v in dir_originlist:
+        if os.path.isdir(os.path.join('.',v)) == True:
+            dir_list.append(v)
+    return dir_list
 
-def output_the_path(dirDict):
+
+def get_file_and_dir_list(Path):
+    os.chdir(Path)
+    dirandfileList = os.listdir(Path)
+    #dirandfileDict = dict(dirandfileList)
+    return dirandfileList
+
+def output_the_path(dirList):
     #dirDict_ = {k:dirList[k] for k in len(dirList)}
-    for i in dirDict:
-        print(i) 
-        print('\n')
+    for i in range(len(dirList)):
+        print('{}  {}'.format(i,dirList[i]))
 
 def make_new_dir():
     os.chdir('.')
@@ -54,23 +60,25 @@ def make_new_dir():
 def copy_and_paste(fileList,destinationPath):
     pass
 
-def get_random_index(num):
+def get_random_file(dirList):
     x = input('你今天想看多少片 \n')
     x = int(x)
-    back = []
-    while len(back) <= x:
-        ind = random.randint(0,num)
-        if ind in back:
+    filelist = []
+    num = []
+    while len(num) <= x:
+        ind = random.randint(0,len(dirList))
+        if ind in num:
             continue
-        elif ind not in back:
-            back.append(ind)
-    return back
-            
+        elif ind not in num:
+            num.append(ind)
+            filelist.append(os.path.join(os.getcwd(),dirList[ind]))
+    return filelist
+  
 
 def main():
     print('get source path \n')
     source_path = get_path()
-    dirDict = get_file_and_dir_dict(source_path)
-    output_the_path(dirDict)
+    dirList = get_file_and_dir_list(source_path)
+    output_the_path(dirList)
 
 main()
