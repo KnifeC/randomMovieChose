@@ -32,10 +32,10 @@ def copy_and_paste():
     pass
 
 def get_random_index(num):
-    x = eval(input('你今天想看多少片'))
+    x = input('你今天想看多少片')
+    x = int(x)
     back = []
-    i=1
-    while len(back) <= x
+    while len(back) <= x:
         ind = random.randint(0,num)
         if ind in back:
             continue
