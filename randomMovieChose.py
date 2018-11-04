@@ -1,6 +1,7 @@
 import os
 import random
 import shutil
+import psutil
 '''
 这个python程序会从一堆电影中随机选出x个并复制进指定文件夹
 用于片子太多无法选择的情况
@@ -17,6 +18,7 @@ def get_path():
         input 'n' to make new dir \n 
         input 'y' to choose the dir \n 
         input 'u' to back parent dir \n
+        input 'd' to change disk dir \n
         '''
         )
         if choose == 'n':
@@ -26,11 +28,23 @@ def get_path():
         elif choose == 'u':
             changePath = os.path.join('.','..')
             os.chdir(changePath)
+        elif choose == 'd':
+            change_disk()
         else :
             sPath = dirList[int(choose)]
             #print(sPath)
             changePath = os.path.join('.',sPath)
             os.chdir(changePath)
+
+def change_disk():
+    disk_list = psutil.disk_partitions()
+    num = len(disk_list)
+    for i in range(num):
+        print("{} {}".format(i,disk_list[i].mountpoint))
+    change = input('please input the num \n')
+    change = eval(change)
+    os.chdir(disk_list[change].mountpoint)
+
 
 def get_dir_list(Path):
     dir_list = []
@@ -39,7 +53,6 @@ def get_dir_list(Path):
         if os.path.isdir(os.path.join('.',v)) == True:
             dir_list.append(v)
     return dir_list
-
 
 def get_file_and_dir_list(Path):
     os.chdir(Path)
