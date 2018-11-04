@@ -5,4 +5,5 @@
 * 请安装psutil
 
 可以切换磁盘了!
-现在不知道什么时候复制完成
+
+现在不知道什么时候复制完成，下一步准备用os.path.getsize(filePath)+threading来完成
