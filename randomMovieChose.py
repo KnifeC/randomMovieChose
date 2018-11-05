@@ -2,10 +2,28 @@ import os
 import random
 import shutil
 import psutil
+import threading
+import time
 '''
 这个python程序会从一堆电影中随机选出x个并复制进指定文件夹
 用于片子太多无法选择的情况
 '''
+
+def pocessStatus(source_path,fileList,target_path):
+    for file in range(len(fileList)):
+        sourceFile = os.path.join(source_path,fileList[file])
+        targetFile = os.path.join(target_path,fileList[file])
+        sourceSize = os.path.getsize(sourceFile)
+        targetSize = os.path.getsize(targetFile)
+        percent = 0
+        while(percent != 1):
+            if(sourceSize == 0):
+                break
+            percent = targetSize/sourceSize
+            sourceSize = os.path.getsize(sourceFile)
+            targetSize = os.path.getsize(targetFile)
+        print('the {}th file {} DONE!!!'.format(file,fileList[file]))
+
 def get_path():
     choose = True
     while choose != 'y':
@@ -106,7 +124,12 @@ def main():
     fileList = get_random_file(dirList)
     print('choose target path ')
     target_path = get_path()
-    copy_and_paste(source_path,fileList,target_path)
+    t_copy = threading.Thread(copy_and_paste(source_path,fileList,target_path))
+    t_percent = threading.Thread(pocessStatus(source_path,fileList,target_path))
+    t_copy.start()
+    t_percent.start()
+    t_copy.join()
+    t_percent.join()
 
 if __name__ == '__main__':
     main()
