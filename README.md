@@ -8,4 +8,6 @@ pip3 install psutil
 ```
 可以切换磁盘了!
 
-现在不知道什么时候复制完成，下一步准备用os.path.getsize(filePath)+threading来完成
+~~现在不知道什么时候复制完成，下一步准备用os.path.getsize(filePath)+threading来完成~~
+
+现在复制完成之后会输出DONE
