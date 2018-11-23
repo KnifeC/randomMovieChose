@@ -2,12 +2,23 @@
 > 主要满足了我自己的随机看片需求
 
 有什么用:从一堆电影中随机选出x个并复制进指定文件夹
-* 请安装psutil
+* 请安装psutil和tqdm
 ```
 pip3 install psutil
+pip3 install tqdm
 ```
+
 可以切换磁盘了!
 
 ~~现在不知道什么时候复制完成，下一步准备用os.path.getsize(filePath)+threading来完成~~
 
 现在复制完成之后会输出DONE
+
+## 2018-11-22
+通过tqdm实现了进度条
+* 需要安装tqdm
+```
+pip install tqdm
+```
+
+本来想用tqdm,结果发现不大会用,就只好自己实现了一个

@@ -4,25 +4,70 @@ import shutil
 import psutil
 import threading
 import time
+
 '''
 这个python程序会从一堆电影中随机选出x个并复制进指定文件夹
 用于片子太多无法选择的情况
 '''
 
-def pocessStatus(source_path,fileList,target_path):
-    for file in range(len(fileList)):
-        sourceFile = os.path.join(source_path,fileList[file])
-        targetFile = os.path.join(target_path,fileList[file])
-        sourceSize = os.path.getsize(sourceFile)
-        targetSize = os.path.getsize(targetFile)
-        percent = 0
-        while(percent != 1):
-            if(sourceSize == 0):
-                break
-            percent = targetSize/sourceSize
-            sourceSize = os.path.getsize(sourceFile)
-            targetSize = os.path.getsize(targetFile)
-        print('the {}th file {} DONE!!!'.format(file,fileList[file]))
+
+def pocessStatus(source_path,file,target_path):
+    sourceFile = os.path.join(source_path,file)
+    targetFile = os.path.join(target_path,file)
+    sourceSize = os.path.getsize(sourceFile)
+    targetSize = os.path.getsize(targetFile)
+    t = time.clock()
+    percent = 0.0
+    if sourceSize == 0:
+        print("{} Done\n".format(file))
+        return
+    while percent != 100:
+        percent = (targetSize/sourceSize) * 100
+        percent = int(percent)
+        scale = percent//5
+        a = '*' * scale
+        b = '.' * (20 - scale)
+        c = percent
+        t -= time.clock()
+        print("\r{}{:^3.0f}%[{}->{}]{:.2f}s".format(file,c,a,b,-t),end='\n')
+        time.sleep(0.05)
+
+    # pbar = tqdm(desc = file,total = 100)
+    # percent = 0
+    # if(sourceSize == 0):
+    #     pbar.update(100)
+    #     pbar.close()
+    #     return True
+    # while(percent != 1):
+    #     time.sleep(0.02)
+    #     percent = targetSize/sourceSize
+    #     int(percent)
+    #     pbar.update = (percent*100)
+    #     sourceSize = os.path.getsize(sourceFile)
+    #     targetSize = os.path.getsize(targetFile)
+    # pbar.close()
+
+def copy_and_paste_single_file(source_path,file,target_path):
+    if os.path.isfile(os.path.join(source_path,file)) == True:
+        sourceFile = os.path.join(source_path,  file)
+        targetFile = os.path.join(target_path,  file)
+        shutil.copy(sourceFile,targetFile)
+    elif os.path.isdir(os.path.join(source_path,file)) == True:
+        sourceFile = os.path.join(source_path,  file)
+        targetFile = os.path.join(target_path,  file)
+        shutil.copytree(sourceFile,targetFile)
+
+def copy_and_paste(source_path,fileList,target_path):
+    for file in fileList:
+        if os.path.isfile(os.path.join(source_path,file)) == True:
+            sourceFile = os.path.join(source_path,  file)
+            targetFile = os.path.join(target_path,  file)
+            shutil.copy(sourceFile,targetFile)
+        elif os.path.isdir(os.path.join(source_path,file)) == True:
+            sourceFile = os.path.join(source_path,  file)
+            targetFile = os.path.join(target_path,  file)
+            shutil.copytree(sourceFile,targetFile)
+
 
 def get_path():
     choose = True
@@ -88,18 +133,6 @@ def make_new_dir():
     name = input('input the new dir name \n')
     os.mkdir(name,777)
 
-def copy_and_paste(source_path,fileList,target_path):
-    for file in fileList:
-        if os.path.isfile(os.path.join(source_path,file)) == True:
-            sourceFile = os.path.join(source_path,  file)
-            targetFile = os.path.join(target_path,  file)
-            shutil.copy(sourceFile,targetFile)
-        elif os.path.isdir(os.path.join(source_path,file)) == True:
-            sourceFile = os.path.join(source_path,  file)
-            targetFile = os.path.join(target_path,  file)
-            shutil.copytree(sourceFile,targetFile)
-
-
 def get_random_file(dirList):
     x = input('你今天想看多少片 \n')
     x = int(x)
@@ -114,7 +147,6 @@ def get_random_file(dirList):
             filelist.append(dirList[ind])
     print(filelist)
     return filelist
-  
 
 def main():
     print('choose source path ')
@@ -124,12 +156,11 @@ def main():
     fileList = get_random_file(dirList)
     print('choose target path ')
     target_path = get_path()
-    t_copy = threading.Thread(copy_and_paste(source_path,fileList,target_path))
-    t_percent = threading.Thread(pocessStatus(source_path,fileList,target_path))
-    t_copy.start()
-    t_percent.start()
-    t_copy.join()
-    t_percent.join()
-
+    for file in fileList:
+        t_copy = threading.Thread(copy_and_paste_single_file(source_path,file,target_path))
+        t_status = threading.Thread(pocessStatus(source_path,file,target_path))
+        t_status.start()
+        t_copy.start()
+        
 if __name__ == '__main__':
     main()
