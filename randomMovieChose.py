@@ -19,7 +19,7 @@ def pocessStatus(source_path,file,target_path):
     t = time.clock()
     percent = 0.0
     if sourceSize == 0:
-        print("{} Done\n".format(file))
+        print("{} Done".format(file))
         return
     while percent != 100:
         percent = (targetSize/sourceSize) * 100
@@ -158,9 +158,10 @@ def main():
     target_path = get_path()
     for file in fileList:
         t_copy = threading.Thread(copy_and_paste_single_file(source_path,file,target_path))
-        t_status = threading.Thread(pocessStatus(source_path,file,target_path))
-        t_status.start()
+        #t_status = threading.Thread(pocessStatus(source_path,file,target_path))      
         t_copy.start()
+        #t_status.start()
+        
         
 if __name__ == '__main__':
     main()
