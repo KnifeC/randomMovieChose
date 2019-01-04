@@ -4,6 +4,7 @@ import shutil
 import psutil
 import threading
 import time
+import sys
 
 '''
 这个python程序会从一堆电影中随机选出x个并复制进指定文件夹
@@ -11,26 +12,26 @@ import time
 '''
 
 
-def pocessStatus(source_path,file,target_path):
-    sourceFile = os.path.join(source_path,file)
-    targetFile = os.path.join(target_path,file)
-    sourceSize = os.path.getsize(sourceFile)
-    targetSize = os.path.getsize(targetFile)
-    t = time.clock()
-    percent = 0.0
-    if sourceSize == 0:
-        print("{} Done".format(file))
-        return
-    while percent != 100:
-        percent = (targetSize/sourceSize) * 100
-        percent = int(percent)
-        scale = percent//5
-        a = '*' * scale
-        b = '.' * (20 - scale)
-        c = percent
-        t -= time.clock()
-        print("\r{}{:^3.0f}%[{}->{}]{:.2f}s".format(file,c,a,b,-t),end='\n')
-        time.sleep(0.05)
+# def pocessStatus(source_path,file,target_path):
+#     sourceFile = os.path.join(source_path,file)
+#     targetFile = os.path.join(target_path,file)
+#     sourceSize = os.path.getsize(sourceFile)
+#     targetSize = os.path.getsize(targetFile)
+#     t = time.clock()
+#     percent = 0.0
+#     if sourceSize == 0:
+#         print("{} Done".format(file))
+#         return
+#     while percent != 100:
+#         percent = (targetSize/sourceSize) * 100
+#         percent = int(percent)
+#         scale = percent//5
+#         a = '*' * scale
+#         b = '.' * (20 - scale)
+#         c = percent
+#         t -= time.clock()
+#         print("\r{}{:^3.0f}%[{}->{}]{:.2f}s".format(file,c,a,b,-t),end='\n')
+#         time.sleep(0.05)
 
     # pbar = tqdm(desc = file,total = 100)
     # percent = 0
@@ -46,6 +47,7 @@ def pocessStatus(source_path,file,target_path):
     #     sourceSize = os.path.getsize(sourceFile)
     #     targetSize = os.path.getsize(targetFile)
     # pbar.close()
+
 
 def copy_and_paste_single_file(source_path,file,target_path):
     if os.path.isfile(os.path.join(source_path,file)) == True:
@@ -133,12 +135,10 @@ def make_new_dir():
     name = input('input the new dir name \n')
     os.mkdir(name,777)
 
-def get_random_file(dirList):
-    x = input('你今天想看多少片 \n')
-    x = int(x)
+def get_random_file(dirList,num_of_file):
     filelist = []
     num = []
-    while len(num) < x:
+    while len(num) < num_of_file:
         ind = random.randint(0,len(dirList)-1)
         if ind in num:
             continue
@@ -148,20 +148,58 @@ def get_random_file(dirList):
     print(filelist)
     return filelist
 
-def main():
+def choose_with_no_argv():
     print('choose source path ')
     source_path = get_path()
     dirList = get_file_and_dir_list(source_path)
     output_the_path(dirList)
-    fileList = get_random_file(dirList)
+    x = input('你今天想看多少片 \n')
+    x = int(x)
+    fileList = get_random_file(dirList,x)
     print('choose target path ')
     target_path = get_path()
-    for file in fileList:
-        t_copy = threading.Thread(copy_and_paste_single_file(source_path,file,target_path))
-        #t_status = threading.Thread(pocessStatus(source_path,file,target_path))      
-        t_copy.start()
-        #t_status.start()
-        
+    copy_and_paste(source_path,fileList,target_path)
+
+def choose_with_one_argv(sourcepath):
+    source_path = sourcepath
+    dirList = get_file_and_dir_list(source_path)
+    output_the_path(dirList)
+    x = input('你今天想看多少片 \n')
+    x = int(x)
+    fileList = get_random_file(dirList,x)
+    print('choose target path ')
+    target_path = get_path()
+    copy_and_paste(source_path,fileList,target_path)
+
+def choose_with_two_argv(sourcepath,targetpath):
+    source_path = sourcepath
+    target_path = targetpath
+    dirList = get_file_and_dir_list(source_path)
+    output_the_path(dirList)
+    x = input('你今天想看多少片 \n')
+    x = int(x)
+    fileList = get_random_file(dirList,x)
+    copy_and_paste(source_path,fileList,target_path)
+
+def choose_with_three_argv(sourcepath,targetpath,file_num):
+    source_path = sourcepath
+    target_path = targetpath
+    x = int(file_num)
+    dirList = get_file_and_dir_list(source_path)
+    fileList = get_random_file(dirList,x)
+    copy_and_paste(source_path,fileList,target_path)
+
+def main():
+    num_of_argv = len(sys.argv)
+    if num_of_argv == 1:
+        choose_with_no_argv()
+    if num_of_argv == 2:
+        choose_with_one_argv(sys.argv[1])
+    if num_of_argv == 3:
+        choose_with_two_argv(sys.argv[1],sys.argv[2])
+    if num_of_argv == 4:
+        choose_with_three_argv(sys.argv[1],sys.argv[2],sys.argv[3])
+
         
 if __name__ == '__main__':
     main()
