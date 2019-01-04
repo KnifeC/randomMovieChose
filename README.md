@@ -3,22 +3,30 @@
 
 有什么用:从一堆电影中随机选出x个并复制进指定文件夹
 * 请安装psutil和tqdm
-```
+```bash
 pip3 install psutil
-pip3 install tqdm
 ```
-
+### ver_0.1
 可以切换磁盘了!
 
 ~~现在不知道什么时候复制完成，下一步准备用os.path.getsize(filePath)+threading来完成~~
 
+### ver_0.2
 现在复制完成之后会输出DONE
 
-## 2018-11-22
-通过tqdm实现了进度条
-* 需要安装tqdm
+### ver_0.3
+现在支持命令行参数使用
+
+* 一个参数
+```bash
+python3 randomMovieChose source_path
 ```
-pip install tqdm
+* 两个参数
+```bash
+python3 randomMovieChose source_path target_path
 ```
 
-本来想用tqdm,结果发现不大会用,就只好自己实现了一个
+* 三个参数
+```bash
+python3 randomMovieChose source_path target_path file_num
+```
